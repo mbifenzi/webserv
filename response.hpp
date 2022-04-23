@@ -5,7 +5,7 @@
 class Response
 {
     private:
-        Socket sock;
+        Socket *sock;
         int status;
         std::string body;
         std::string contentType;
@@ -21,15 +21,18 @@ class Response
         std::string vary;
         std::string transferEncoding;
         std::string varyAcceptEncoding;
+        std::string varyAcceptEncodingDeflateGzip;
+        std::string varyAcceptEncodingBrotliDeflateGzip;
         std::string varyAcceptEncodingGzip;
         std::string varyAcceptEncodingDeflate;
         std::string varyAcceptEncodingBrotli;
         std::string varyAcceptEncodingBrotliDeflate;
         std::string varyAcceptEncodingBrotliGzip;
         std::string varyAcceptEncodingBrotliGzipDeflate;
-        std::string varyAcceptEncodingBrotliGzipDeflateGzip;
+        std::string varyAcceptEncodingBrotliGzipDeflateBrotli;
+        std::string varyAcceptEncodingBrotliGzipDeflateBrotliDeflate;
     public:
-        Response();
+        Response(Socket socket);
         ~Response();
         void setStatus(int status);
         void setBody(std::string body);
@@ -53,10 +56,18 @@ class Response
         void setVaryAcceptEncodingBrotliGzip(std::string varyAcceptEncodingBrotliGzip);
         void setVaryAcceptEncodingBrotliGzipDeflate(std::string varyAcceptEncodingBrotliGzipDeflate);
         void setVaryAcceptEncodingBrotliDeflateGzip(std::string varyAcceptEncodingBrotliDeflateGzip);
-        void setVaryAcceptEncodingBrotliDeflateGzipGzip(std::string varyAcceptEncodingBrotliDeflateGzipGzip);
-        void setVaryAcceptEncodingBrotliGzipDeflateGzip(std::string varyAcceptEncodingBrotliGzipDeflateGzip);
-        void setVaryAcceptEncodingBrotliGzipDeflateGzipGzip(std::string varyAcceptEncodingBrotliGzipDeflateGzipGzip);
+        void setVaryAcceptEncodingDeflateGzip(std::string varyAcceptEncodingDeflateGzip);
+        void setVaryAcceptEncodingBrotliGzipDeflateBrotli(std::string varyAcceptEncodingBrotliGzipDeflateBrotli);
+        void setVaryAcceptEncodingBrotliGzipDeflateBrotliDeflate(std::string varyAcceptEncodingBrotliGzipDeflateBrotliDeflate);
         std::string getResponse();
-};
+        class Response_error:public std::exception
+        {
+            const char* what() const throw()
+            {
+                return "Response error";
+            }
+        };
+
+};//end class Response
 
 #endif

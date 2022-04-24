@@ -1,6 +1,6 @@
 NAME = Socket
 
-SRC =	main.cpp Socket.cpp
+SRC =	main.cpp Socket.cpp Request.cpp 
 
 all :	$(NAME)
 

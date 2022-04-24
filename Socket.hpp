@@ -35,32 +35,4 @@ class Socket
     	};
 };
 
-class Request
-{
-	private:
-		std::string method;
-		std::string path;
-		std::string version;
-		std::string host;
-		std::string port;
-		std::string body;
-		std::string length;
-		bool	endHeader;
-	public:
-		Request();
-		~Request();
-		std::map<std::string, std::string> Header;
-		void getHeader(std::string line);
-		void parseHeader(std::map<std::string, std::string> header);
-		class Bad_request:public std::exception
-		{
-			const char* what() const throw()
-			{
-				return "Request error";
-			}
-		};
-};
-std::string split (std::string str, char delimiter);
-
-
 #endif

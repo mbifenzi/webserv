@@ -1,4 +1,6 @@
 #include "Socket.hpp"
+#include "Response.hpp"
+#include "Request.hpp"
 
 int main()
 {

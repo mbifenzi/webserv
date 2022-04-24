@@ -42,15 +42,13 @@ class Request
 		std::string host;
 		std::string port;
 		std::string body;
-		// std::string ;
-		// std::string method;
 	public:
 		Request();
+		Request::Request(std::string request)
 		~Request();
 		std::map<std::string, std::string> Header;
 		std::map<std::string, std::string> getHeader(std::string line);
-		void parse_request(std::string buffer);
-		void parse_buffer();
+		void parseHeader(std::map<std::string, std::string> header);
 		class Request_error:public std::exception
 		{
 			const char* what() const throw()

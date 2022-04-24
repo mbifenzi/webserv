@@ -49,7 +49,36 @@ Request::Request()
     body = "";
     host = "";
     port = "";
+}
 
+Request::~Request()
+{
+}
+
+Request::Request(std::string request)
+{
+    std::stringstream ss(request);
+    std::string line;
+    std::vector<std::string> lines;
+    while (std::getline(ss, line))
+    {
+        lines.push_back(line);
+    }
+    method = lines[0];
+    path = lines[1];
+    version = lines[2];
+    for (int i = 3; i < lines.size(); i++)
+    {
+        std::stringstream ss(lines[i]);
+        std::string key;
+        std::string value;
+        std::getline(ss, key, ':');
+        std::getline(ss, value);
+        Header[key] = value;
+    }
+    body = "";
+    host = "";
+    port = "";
 }
 
 

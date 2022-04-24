@@ -5,7 +5,7 @@ int main()
     try
     {
         Socket sock(AF_INET, SOCK_STREAM, 0, 1415, INADDR_ANY);
-        // Request req;
+        Request req;
         while (1)
         {
             if (listen(sock.getSockfd(), 10) < 0) 
@@ -18,7 +18,7 @@ int main()
             int n = read(connfd, buffer, 1024);
             buffer[n] = '\0';
             std::cout << buffer << std::endl;
-            // req.Header = req.getHeader(buffer);
+            req.getHeader(buffer);
             // req.parseHeader(req.Header);
             //send data
             // char msg[] ="hayhayhay 3la t9e7biin\n";

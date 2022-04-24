@@ -10,6 +10,8 @@
 #include <unistd.h>
 #include <vector>
 #include <map>
+#include <sstream>
+// #include <string>
 class Socket
 {
 	private:
@@ -42,14 +44,15 @@ class Request
 		std::string host;
 		std::string port;
 		std::string body;
+		std::string length;
+		bool	endHeader;
 	public:
 		Request();
-		Request::Request(std::string request)
 		~Request();
 		std::map<std::string, std::string> Header;
-		std::map<std::string, std::string> getHeader(std::string line);
+		void getHeader(std::string line);
 		void parseHeader(std::map<std::string, std::string> header);
-		class Request_error:public std::exception
+		class Bad_request:public std::exception
 		{
 			const char* what() const throw()
 			{
@@ -57,5 +60,7 @@ class Request
 			}
 		};
 };
+std::string split (std::string str, char delimiter);
+
 
 #endif

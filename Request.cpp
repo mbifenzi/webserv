@@ -15,10 +15,19 @@ Request::~Request()
 {
 }
 
+void Request::getBody(std::vector<std::string>line, int i)
+{
+    for (size_t j = i; j < line.size(); j++)
+    {
+        body += line[j];
+    }
+}
+
 void Request::getHeader(std::string request)
 {
     std::stringstream ss(request);
     std::string line;
+    endHeader = false;
     std::vector<std::string> lines;
     std::getline(ss, method, ' ');
     std::getline(ss, path, ' ');
@@ -32,47 +41,45 @@ void Request::getHeader(std::string request)
     {
         if (lines[i].find("Host:") != std::string::npos)
         {
+            std::cout << "host" << std::endl;
             pos = lines[i].find(":");
-            host = lines[i].substr(pos + 1);
-            std::cout << host << std::endl;
+            host = lines[i].substr(0, pos);
+            port = lines[i].substr(pos + 2);
         }
-        else if (size_t pos = lines[i].find("Port:") != std::string::npos)
+        if (lines[i].find("Content-Length:") != std::string::npos)
         {
             pos = lines[i].find(":");
-            port = lines[i].substr(pos + 1);
+            length = lines[i].substr(pos + 2);
         }
-        else if (size_t pos = lines[i].find("Content-Length:") != std::string::npos)
+        else if (lines[i] == "\r")
         {
-            pos = lines[i].find(":");
-            length = lines[i].substr(pos + 1);
-        }
-        else if (size_t pos = lines[i].find("\r\n") != std::string::npos)
-        {
+            std::cout << "backslash" << std::endl;
             endHeader = true;
         }
-        else 
-            throw Bad_request();
-        if (endHeader == true)
+        else if (endHeader == false)
         {
-            body = lines[i];
-        }
-        else
-        {
-
-            pos = lines[i].find(":");
+            std::cout << "------------" << std::endl;
+            std::cout << lines[i] << std::endl;
+            pos = split(lines[i], ':');
             std::string key = lines[i].substr(0, pos);
             std::string value = lines[i].substr(pos + 1);
             Header[key] = value;
         }
+        if (endHeader == true)
+        {
+            std::cout << "true" << std::endl;
+            getBody(lines, i);
+            break ;
+        }
     }
 }
 
-std::string Request::split(std::string str, char delimiter)
+size_t Request::split(std::string str, char delimiter)
 {
     if (str.find(delimiter) != std::string::npos)
     {
         size_t pos = str.find(delimiter);
-        return str.substr(pos + 1);
+        return pos;
     }
     else
         throw Bad_request();

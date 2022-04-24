@@ -28,8 +28,9 @@ class Request
         ~Request();
         std::map<std::string, std::string> Header;
         void getHeader(std::string line);
+        void getBody(std::vector<std::string>line, int i);
         void parseHeader(std::map<std::string, std::string> header);
-        std::string split (std::string str, char delimiter);
+        size_t split (std::string str, char delimiter);
         class Bad_request:public std::exception
         {
             const char* what() const throw()

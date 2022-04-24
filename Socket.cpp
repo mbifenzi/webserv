@@ -39,4 +39,3 @@ struct sockaddr_in Socket::getAddr()
 {
     return addr;
 }
-// request parsing here ;

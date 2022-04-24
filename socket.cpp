@@ -40,8 +40,16 @@ struct sockaddr_in Socket::getAddr()
     return addr;
 }
 // request parsing here ;
-
 Request::Request()
 {
     method = "";
+    path = "";
+    version = "";
+    Header = std::map<std::string, std::string>();
+    body = "";
+    host = "";
+    port = "";
+
 }
+
+

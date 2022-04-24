@@ -9,7 +9,7 @@
 #include <netinet/in.h>
 #include <unistd.h>
 #include <vector>
-
+#include <map>
 class Socket
 {
 	private:
@@ -36,7 +36,6 @@ class Socket
 class Request
 {
 	private:
-		std::vector<std::pair<std::string, std::string>> header;
 		std::string method;
 		std::string path;
 		std::string version;
@@ -48,9 +47,9 @@ class Request
 	public:
 		Request();
 		~Request();
+		std::map<std::string, std::string> Header;
+		std::map<std::string, std::string> getHeader(std::string line);
 		void parse_request(std::string buffer);
-		std::string getBuffer();
-		void setBuffer(std::string buffer);
 		void parse_buffer();
 		class Request_error:public std::exception
 		{

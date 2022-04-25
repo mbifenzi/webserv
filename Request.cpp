@@ -39,35 +39,21 @@ void Request::getHeader(std::string request)
     }
     for (size_t i = 0; i < lines.size(); i++)
     {
-        if (lines[i].find("Host:") != std::string::npos)
+        if (lines[i] == "\r")
         {
-            std::cout << "host" << std::endl;
-            pos = lines[i].find(":");
-            host = lines[i].substr(0, pos);
-            port = lines[i].substr(pos + 2);
-        }
-        if (lines[i].find("Content-Length:") != std::string::npos)
-        {
-            pos = lines[i].find(":");
-            length = lines[i].substr(pos + 2);
-        }
-        else if (lines[i] == "\r")
-        {
-            std::cout << "backslash" << std::endl;
             endHeader = true;
         }
         else if (endHeader == false)
         {
-            std::cout << "------------" << std::endl;
-            std::cout << lines[i] << std::endl;
             pos = split(lines[i], ':');
             std::string key = lines[i].substr(0, pos);
             std::string value = lines[i].substr(pos + 1);
             Header[key] = value;
+            std::cout << key << ": " << value << std::endl;
+    
         }
         if (endHeader == true)
         {
-            std::cout << "true" << std::endl;
             getBody(lines, i);
             break ;
         }

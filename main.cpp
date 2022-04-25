@@ -21,9 +21,6 @@ int main()
             buffer[n] = '\0';
             std::cout << buffer << std::endl;
             req.getHeader(buffer);
-            // req.parseHeader(req.Header);
-            //send data
-            // char msg[] ="hayhayhay 3la t9e7biin\n";
             char msg[] ="HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length: 24\n\nHello world from server!";
             write(connfd, msg, strlen(msg));
             close(connfd);

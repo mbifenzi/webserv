@@ -17,9 +17,36 @@ Request::~Request()
 
 void Request::getBody(std::vector<std::string>line, int i)
 {
-    for (size_t j = i; j < line.size(); j++)
+    if (Header.count("Transfer-Encoding") && Header["Transfer-Encoding"] == "chunked")
     {
-        body += line[j];
+        endHeader = false;
+        if (line[i] == "0")
+        {
+            endHeader = true;
+            return;
+        }
+        else
+        {
+            std::stringstream ss;
+            ss << std::hex << line[i];
+            int size = 0;
+            ss >> size;
+            std::string chunk = "";
+            for (int j = i + 1; j < i + size + 1; j++)
+            {
+                chunk += line[j];
+            }
+            body += chunk;
+            getBody(line, i + size + 1);
+        }
+    }
+    else
+    {
+        for (size_t j = i; j < line.size(); j++)
+        {
+            body += line[j];
+        }
+        endHeader = true;
     }
 }
 
@@ -32,7 +59,7 @@ void Request::getHeader(std::string request)
     std::getline(ss, method, ' ');
     std::getline(ss, path, ' ');
     std::getline(ss, version, '\n');
-    size_t pos ;
+    size_t pos;
     while (std::getline(ss, line, '\n'))
     {
         lines.push_back(line);
@@ -42,6 +69,7 @@ void Request::getHeader(std::string request)
         if (lines[i] == "\r")
         {
             endHeader = true;
+            i++;
         }
         else if (endHeader == false)
         {

@@ -45,6 +45,7 @@ void Request::getBody(std::vector<std::string>line, int i)
         for (size_t j = i; j < line.size(); j++)
         {
             body += line[j];
+            std::cout << body  + "-----" << std::endl;
         }
         endHeader = true;
     }
@@ -77,7 +78,7 @@ void Request::getHeader(std::string request)
             std::string key = lines[i].substr(0, pos);
             std::string value = lines[i].substr(pos + 1);
             Header[key] = value;
-            std::cout << key << ": " << value << std::endl;
+            // std::cout << key << ": " << value << std::endl;
     
         }
         if (endHeader == true)

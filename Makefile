@@ -7,7 +7,7 @@ all :	$(NAME)
 bonus : $(BONUS_NAME)
 
 $(NAME): $(SRC)
-		@c++ -Wall -Wextra -Werror -std=c++98 $(SRC) -o $(NAME) #-fsanitize=address -g
+		@c++ -Wall -Wextra -Werror -std=c++98 $(SRC) -o $(NAME) -fsanitize=address -g
 
 clean:
 	@rm -f $(OBJECT)

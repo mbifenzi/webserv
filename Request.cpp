@@ -1,6 +1,6 @@
 #include "Request.hpp"
 #include <fstream>
-
+#include <string.h>
 Request::Request()
 {
     method = "";
@@ -18,42 +18,51 @@ Request::~Request()
 
 void Request::getBody(std::vector<std::string>line, int i)
 {
-    (void)i;
-    (void) line;
     std::cout << "|" <<  Header["Transfer-Encoding"] << "$" << std::endl;
-    // std::cout << "-" << std::endl;
-    // if (Header.count("Transfer-Encoding") && Header.find("Transfer-Encoding")->second == "chunked")
-    // {
-    //     if (line[i] == "0")
-    //     {
-    //         endBody = true;
-    //         return;
-    //     }
-    //     else
-    //     {
-    //         std::stringstream ss;
-    //         ss << std::hex << line[i];
-    //         int size = 0;
-    //         ss >> size;
-    //         std::cout << "siiiize " << size << std::endl;
-    //         std::string chunk = "";
-    //         for (int j = i + 1; j < i + size + 1; j++)
-    //         {
-    //             chunk += line[j];
-    //         }
-    //         body += chunk;
-    //         getBody(line, i + size + 1);
-    //     }
-    // }
-    // else
-    // {
-    //     for (size_t j = i; j < line.size(); j++)
-    //     {
-    //         body += line[j];
-    //         std::cout <<  " HADA BODY " << body << std::endl;
-    //     }
-    //     endBody = true;
-    // }
+    std::cout << "-" << std::endl;
+    if (Header.count("Transfer-Encoding") && Header.find("Transfer-Encoding")->second == "chunked")
+    {
+        if (line[i] == "0")
+        {
+            endBody = true;
+            return;
+        }
+        else
+        {
+            size_t bifenzi;
+            std::stringstream ss;
+            ss << std::hex << line[i];
+            int size = 0;
+            ss >> size;
+            std::string chunk = "";
+            ++i;
+            while (true)
+            {
+                if (line[i][0] == '0')
+                {
+                    endBody = true;
+                    return;
+                }
+                bifenzi = line[i].size();
+                if (line[i][bifenzi - 1] == '\r')
+                    chunk += line[i++].substr(0, bifenzi - 1);
+                else
+                    chunk += line[i++];
+            }
+            body += chunk;
+             std::cout << "debug" << std::endl;
+        }
+    }
+    else
+    {
+        for (size_t j = i; j < line.size(); j++)
+        {
+            body += line[j];
+            std::cout <<  " HADA BODY " << body << std::endl;
+        }
+        endBody = true;
+    }
+   
 }
 
 void Request::getHeader(std::string request)
@@ -77,16 +86,16 @@ void Request::getHeader(std::string request)
         {
             endHeader = true;
 
-            std::map<std::string, std::string> headersss = Header;
-            for (std::map<std::string, std::string>::iterator it = headersss.begin(); it != headersss.end(); ++it)
-                std::cout << it->first << "=>" << it->second << std::endl;
-            i += 2;
+            // std::map<std::string, std::string> headersss = Header;
+            // for (std::map<std::string, std::string>::iterator it = headersss.begin(); it != headersss.end(); ++it)
+            //     std::cout << it->first << "=>" << it->second << std::endl;
+            i++;
         }
         else if (endHeader == false)
         {
             pos = split(lines[i], ':');
             std::string key = lines[i].substr(0, pos);
-            std::string value = lines[i].substr(pos + 2, split(lines[i], "\r\n"));
+            std::string value = lines[i].substr(pos + 2, split(lines[i], '\r') - pos - 2);
             Header[key] = value;
         }
         if (endHeader == true)

@@ -6,9 +6,10 @@ Socket::Socket(int domain, int service, int protocol, int port, u_long interface
     addr.sin_port = htons(port);
     addr.sin_addr.s_addr = htonl(interface);
     sockfd = socket(domain, service, protocol);
-    test_connection(sockfd);
+    //test_connection(sockfd);
     connectfd = bind(sockfd, (struct sockaddr *)&addr, sizeof(addr));
-    test_connection(connectfd);
+    //test_connection(connectfd);
+     
 }
 Socket::~Socket()
 {

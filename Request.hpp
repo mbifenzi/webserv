@@ -23,6 +23,7 @@ class Request
         std::string body;
         std::string length;
         bool	endHeader;
+        bool    endBody;
     public:
         Request();
         ~Request();
@@ -31,6 +32,8 @@ class Request
         void getBody(std::vector<std::string>line, int i);
         void parseHeader(std::map<std::string, std::string> header);
         size_t split (std::string str, char delimiter);
+        size_t split(std::string str, std::string delimiter);
+
         class Bad_request:public std::exception
         {
             const char* what() const throw()

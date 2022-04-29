@@ -18,8 +18,6 @@ Request::~Request()
 
 void Request::getBody(std::vector<std::string>line, int i)
 {
-    std::cout << "|" <<  Header["Transfer-Encoding"] << "$" << std::endl;
-    std::cout << "-" << std::endl;
     if (Header.count("Transfer-Encoding") && Header.find("Transfer-Encoding")->second == "chunked")
     {
         if (line[i] == "0")
@@ -34,7 +32,6 @@ void Request::getBody(std::vector<std::string>line, int i)
             ss << std::hex << line[i];
             int size = 0;
             ss >> size;
-            std::string chunk = "";
             ++i;
             while (true)
             {
@@ -45,12 +42,10 @@ void Request::getBody(std::vector<std::string>line, int i)
                 }
                 bifenzi = line[i].size();
                 if (line[i][bifenzi - 1] == '\r')
-                    chunk += line[i++].substr(0, bifenzi - 1);
+                    body += line[i++].substr(0, bifenzi - 1) + "\n";
                 else
-                    chunk += line[i++];
+                    body += line[i++] + "\n";
             }
-            body += chunk;
-             std::cout << "debug" << std::endl;
         }
     }
     else
@@ -58,7 +53,6 @@ void Request::getBody(std::vector<std::string>line, int i)
         for (size_t j = i; j < line.size(); j++)
         {
             body += line[j];
-            std::cout <<  " HADA BODY " << body << std::endl;
         }
         endBody = true;
     }
@@ -85,10 +79,6 @@ void Request::getHeader(std::string request)
         if (lines[i] == "\r")
         {
             endHeader = true;
-
-            // std::map<std::string, std::string> headersss = Header;
-            // for (std::map<std::string, std::string>::iterator it = headersss.begin(); it != headersss.end(); ++it)
-            //     std::cout << it->first << "=>" << it->second << std::endl;
             i++;
         }
         else if (endHeader == false)
@@ -104,6 +94,10 @@ void Request::getHeader(std::string request)
             break ;
         }
     }
+    std::ofstream outfile;
+    outfile.open("/Users/mbifenzi/Desktop/1337/webserv/file.txt");
+    outfile << body;
+    outfile.close();
 }
 
 size_t Request::split(std::string str, char delimiter)

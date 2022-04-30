@@ -26,8 +26,10 @@ int main()
                 continue;
             }
             char buffer[1024];
+            memset(buffer, 0, sizeof(buffer));
             n = read(connfd, buffer, 1024);
-            buffer[n+1] = '\0';
+            buffer[n] = '\0';
+            write(1, buffer, 1024);
             std::string request(buffer, n);
             req.getHeader(request);
             char msg[] ="HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length: 24\n\nHello world from server!";

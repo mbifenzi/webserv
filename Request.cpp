@@ -94,10 +94,10 @@ void Request::getHeader(std::string request)
             break ;
         }
     }
-    std::ofstream outfile;
-    outfile.open("/Users/mbifenzi/Desktop/1337/webserv/file.txt");
-    outfile << body;
-    outfile.close();
+    // std::ofstream outfile;
+    // outfile.open("/Users/mbifenzi/Desktop/1337/webserv/file.txt");
+    // outfile << body;
+    // outfile.close();
 }
 
 size_t Request::split(std::string str, char delimiter)

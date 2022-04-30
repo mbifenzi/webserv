@@ -18,9 +18,15 @@ Request::~Request()
 
 void Request::getBody(std::vector<std::string>line, int i)
 {
+    std::vector<std::string>::iterator it;
+    it = line.begin();
     if (Header.count("Transfer-Encoding") && Header.find("Transfer-Encoding")->second == "chunked")
     {
-        if (line[i] == "0")
+        if (it != line.end())
+        {
+            return;
+        }
+        if (*it == "0")
         {
             endBody = true;
             return;
@@ -29,30 +35,52 @@ void Request::getBody(std::vector<std::string>line, int i)
         {
             size_t bifenzi;
             std::stringstream ss;
-            ss << std::hex << line[i];
+            ss << std::hex << (*it);
             int size = 0;
             ss >> size;
-            ++i;
+            int sized = (*it).size();
+            int j = 0;
+            ++it;
             while (true)
             {
-                if (line[i][0] == '0')
+                j++;
+                if (j == sized)
                 {
-                    endBody = true;
-                    return;
+                    break;
                 }
-                bifenzi = line[i].size();
-                if (line[i][bifenzi - 1] == '\r')
-                    body += line[i++].substr(0, bifenzi - 1) + "\n";
+                if (size == 0)
+                {
+                    break;
+                }
+                //std::cerr << "size is :" << line[i].size() << std::endl;
+                // if (line[i].size() == 0)
+                // {
+                    // endBody = true;
+                    // return;
+                // }
+                if (it != line.end() && *it == "\r\0")
+                {
+                   return;
+                }
+                bifenzi = (*it).size();
+                if ((*it)[bifenzi - 1] == '\r')
+                {
+                    body += (*it).substr(0, bifenzi - 1) + "\n";
+                    it++;
+                }
                 else
-                    body += line[i++] + "\n";
+                {
+                    body += (*it) + "\n";
+                    it++;
+                }
             }
         }
     }
     else
     {
-        for (size_t j = i; j < line.size(); j++)
+        for (size_t j = i; j < (*it).size(); j++)
         {
-            body += line[j];
+            body += (*it)[j];
         }
         endBody = true;
     }

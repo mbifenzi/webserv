@@ -28,7 +28,8 @@ int main()
             char buffer[1024];
             memset(buffer, 0, sizeof(buffer));
             n = read(connfd, buffer, 1024);
-            buffer[n] = '\0';
+            std::cerr << "My n is :"<< n << std::endl;
+            buffer[n-1] = '\0';
             write(1, buffer, 1024);
             std::string request(buffer, n);
             req.getHeader(request);

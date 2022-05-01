@@ -27,15 +27,18 @@ int main()
             }
             char buffer[1024];
             memset(buffer, 0, sizeof(buffer));
-            n = read(connfd, buffer, 1024);
-            std::cerr << "My n is :"<< n << std::endl;
-            buffer[n-1] = '\0';
-            write(1, buffer, 1024);
-            std::string request(buffer, n);
-            req.getHeader(request);
-            char msg[] ="HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length: 24\n\nHello world from server!";
-            write(connfd, msg, strlen(msg));
-            close(connfd);
+            
+            while ((n = read(connfd, buffer, sizeof(buffer))) > 0)
+                write(1, buffer, n);
+            exit(1);    
+           // n = read(connfd, buffer, 1024);
+          ////  st/d::cerr << "My n is :"<< n << std::endl;
+           // buffer[n-1] = '\0';
+           // std::string request(buffer, n);
+           // req.getHeader(request);
+           // char msg[] ="HTTP/1.1 200 OK\nContent-Type: text/html\nContent-Length: 24\n\nHello world from server!";
+           // write(connfd, msg, strlen(msg));
+           // close(connfd);
         }
     }
     catch(const std::exception& e)

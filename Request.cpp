@@ -101,13 +101,13 @@ void Request::getHeader(std::string request)
     
     while (std::getline(ss, line, '\n'))
         lines.push_back(line);
-
     for (size_t i = 0; i < lines.size(); i++)
     {
-        if (lines[i] == "\r")
+        if (lines[i] == "\r\n")
         {
             endHeader = true;
             i++;
+            break;
         }
         else if (endHeader == false)
         {

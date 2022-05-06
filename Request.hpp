@@ -28,7 +28,7 @@ class Request
         Request();
         ~Request();
         std::map<std::string, std::string> Header;
-        void getHeader(std::string line);
+        void getHeader(int sockfd);
         void getBody(std::vector<std::string>line, int i);
         void parseHeader(std::map<std::string, std::string> header);
         size_t split (std::string str, char delimiter);

@@ -11,6 +11,7 @@
 #include <vector>
 #include <map>
 #include <sstream>
+#include <fcntl.h>
 // #include <string>
 class Socket
 {
@@ -24,8 +25,6 @@ class Socket
 		int 	getSockfd();
 		int 	getConnectfd();
 		struct sockaddr_in getAddr();
-		void	test_connection(int fd);
-		// virtual int connect_to_server(int sockfd, struct sockaddr_in addr);
 		class Suck_it:public std::exception
     	{
 			const char* what() const throw()

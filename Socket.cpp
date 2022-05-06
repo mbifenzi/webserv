@@ -6,24 +6,15 @@ Socket::Socket(int domain, int service, int protocol, int port, u_long interface
     addr.sin_port = htons(port);
     addr.sin_addr.s_addr = htonl(interface);
     sockfd = socket(domain, service, protocol);
-    //test_connection(sockfd);
-    connectfd = bind(sockfd, (struct sockaddr *)&addr, sizeof(addr));
-    //test_connection(connectfd);
+    connectfd = bind(sockfd, (struct sockaddr *) &addr, sizeof(addr));
+    fcntl( sockfd, F_SETFL, O_NONBLOCK);
+    listen(sockfd, 10);
      
 }
 Socket::~Socket()
 {
     close(sockfd);
     close(connectfd);
-}
-
-void    Socket::test_connection(int fd)
-{
-    if (fd < 0)
-    {
-        throw Suck_it();
-        exit(1);
-    }
 }
 
 int    Socket::getSockfd()

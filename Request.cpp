@@ -1,4 +1,5 @@
 #include "Request.hpp"
+#include "Socket.hpp"
 #include <fstream>
 #include <string.h>
 Request::Request()
@@ -87,41 +88,43 @@ void Request::getBody(std::vector<std::string>line, int i)
    
 }
 
-void Request::getHeader(std::string request)
+void Request::getHeader(int sockfd)
 {
     endBody = false;
-    std::stringstream ss(request);
-    std::string line;
     endHeader = false;
+    char buffer[1024];
     std::vector<std::string> lines;
+    int n = read(sockfd, buffer, 1024);
+    buffer[n] = '\0';
+    // int i = 0;
+        lines.push_back(buffer);
+    std::stringstream ss(buffer);
+    // std::vector<std::string> lines;
     std::getline(ss, method, ' ');
     std::getline(ss, path, ' ');
     std::getline(ss, version, '\n');
-    size_t pos;
-    
-    while (std::getline(ss, line, '\n'))
-        lines.push_back(line);
-    for (size_t i = 0; i < lines.size(); i++)
-    {
-        if (lines[i] == "\r\n")
-        {
-            endHeader = true;
-            i++;
-            break;
-        }
-        else if (endHeader == false)
-        {
-            pos = split(lines[i], ':');
-            std::string key = lines[i].substr(0, pos);
-            std::string value = lines[i].substr(pos + 2, split(lines[i], '\r') - pos - 2);
-            Header[key] = value;
-        }
-        if (endHeader == true)
-        {
-            getBody(lines, i);
-            break ;
-        }
-    }
+    // size_t pos;
+    // for (size_t i = 0; i < lines.size(); i++)
+    // {
+    //     if (lines[i] == "\r\n")
+    //     {
+    //         endHeader = true;
+    //         i++;
+    //         break;
+    //     }
+    //     else if (endHeader == false)
+    //     {
+    //         pos = split(lines[i], ':');
+    //         std::string key = lines[i].substr(0, pos);
+    //         std::string value = lines[i].substr(pos + 2, split(lines[i], '\r') - pos - 2);
+    //         Header[key] = value;
+    //     }
+    //     if (endHeader == true)
+    //     {
+    //         getBody(lines, i);
+    //         break ;
+    //     }
+    // }
     // std::ofstream outfile;
     // outfile.open("/Users/mbifenzi/Desktop/1337/webserv/file.txt");
     // outfile << body;

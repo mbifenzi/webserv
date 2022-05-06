@@ -30,7 +30,7 @@ int main()
             
             while ((n = read(connfd, buffer, sizeof(buffer))) > 0)
                 write(1, buffer, n);
-            exit(1);    
+            exit(1);
            // n = read(connfd, buffer, 1024);
           ////  st/d::cerr << "My n is :"<< n << std::endl;
            // buffer[n-1] = '\0';

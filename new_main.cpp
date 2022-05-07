@@ -8,15 +8,14 @@ int main(int argc, char **argv)
 {
     (void)argc;
     Socket socket(AF_INET, SOCK_STREAM, 0, atoi(argv[1]), INADDR_ANY);
-    //Request request;
+    Request request;
      struct sockaddr_in address;
     // Response response;
     char buffer[1024];
     struct  pollfd fds[100];
     int new_connection;
     int nfds;
-    int n;
-    //int i = 0;
+    int n = 0;
     int address_len = sizeof(address);
     memset(address.sin_zero, '\0', sizeof address.sin_zero);
     fds[0].fd = socket.getSockfd();
@@ -24,6 +23,7 @@ int main(int argc, char **argv)
     nfds = 1;
     while (1)
     {
+        // std::cout << "Connection established" << std::endl;
         nfds = poll(fds, nfds, -1);
         for (int i = 0; i < nfds ; ++i)
         {
@@ -48,32 +48,19 @@ int main(int argc, char **argv)
             else
             {
                 // write (fds[i].fd, .....)
-                n = read( new_connection, buffer, 1024));
-                buffer[n] = '\0';
-                write(1, buffer, 1024);
-                close( new_connection);
-                close( fds[i].fd );
+                // while ((n = read(fds[i].fd,&buffer[n], 1)) > 0)
+                // {
+                //     n++;
+                // }
+                
+                    n = read( new_connection, buffer, 1024);
+                    buffer[n] = '\0';          
+                    // request.getHeader(buffer);   
+                    // write(fds[i].fd, "hello from server\n" , 18);
+                    write(1, buffer , strlen(buffer));
+                    close(new_connection);
+                // close( fds[i].fd );
             }
         }
-        // accept(socket.getSockfd(), (struct sockaddr *)&address,(socklen_t *)&address_len);
-        // fcntl( socket.getSockfd(), F_SETFL, O_NONBLOCK);
-        // //accept(socket.getSockfd(), &address, (socklen_t *)sizeof(address));
-        // fds[i].fd = socket.getSockfd();
-        // fds[i].events = POLLIN;
-        // n = poll(fds, i + 1, -1);
-        // if (n == -1)
-        // {
-        //     perror("poll");
-        //     exit(1);
-        // }
-        // exit(1);
-        // // if (fds[i].revents & POLLIN)
-        // // {
-
-        //     // request.getHeader(socket.getSockfd());
-        //     // request.write(socket.getSockfd());
-        // // }
-        // close(fds[i].fd);
-        // i++;
     }
 }

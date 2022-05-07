@@ -88,14 +88,12 @@ void Request::getBody(std::vector<std::string>line, int i)
    
 }
 
-void Request::getHeader(int sockfd)
+void Request::getHeader(char *buffer)
 {
     endBody = false;
     endHeader = false;
-    char buffer[1024];
+    // char buffer[1024];
     std::vector<std::string> lines;
-    int n = read(sockfd, buffer, 1024);
-    buffer[n] = '\0';
     // int i = 0;
         lines.push_back(buffer);
     std::stringstream ss(buffer);

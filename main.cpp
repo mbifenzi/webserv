@@ -6,8 +6,10 @@
 
 int main()
 {
+    // socket()
     try
     {
+        std::string header;
         Socket sock(AF_INET, SOCK_STREAM, 0, 1415, INADDR_ANY);
         Request req;
         int n;

@@ -15,6 +15,7 @@
 class Request
 {
     private:
+        
         std::string method;
         std::string path;
         std::string version;
@@ -28,12 +29,11 @@ class Request
         Request();
         ~Request();
         std::map<std::string, std::string> Header;
-        void getHeader(int sockfd);
+        void getHeader(char *buffer);
         void getBody(std::vector<std::string>line, int i);
         void parseHeader(std::map<std::string, std::string> header);
         size_t split (std::string str, char delimiter);
         size_t split(std::string str, std::string delimiter);
-
         class Bad_request:public std::exception
         {
             const char* what() const throw()

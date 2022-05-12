@@ -5,7 +5,7 @@
 class Response
 {
     private:
-        Socket *sock;
+        // Socket *sock;
         int status;
         std::string body;
         std::string contentType;

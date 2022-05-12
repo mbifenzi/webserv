@@ -1,16 +1,17 @@
 #include "Socket.hpp"
-#include "Response.hpp"
-#include "Request.hpp"
+// #include "Response.hpp"
+// #include "Request.hpp"
 #include <fcntl.h>
 #include <poll.h>
 
-int main()
+int main(int argc, char **argv)
 {
-    // socket()
+    (void)argc;
+    (void)argv;
     std::string header;
-    Socket *sock;
-    sock[0] = Socket(AF_INET, SOCK_STREAM, 0, 1415, INADDR_ANY);
-        // Request req;
+    std::cout << "debug" << std::endl;
+    Socket *sock[1];
+    sock[0] =  new Socket(AF_INET, SOCK_STREAM, 0, 1415, INADDR_ANY);
     sock[0].event_loop();
     return 0;
 }

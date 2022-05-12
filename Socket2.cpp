@@ -5,28 +5,28 @@ void Socket::event_loop()
     struct sockaddr_in address;
     int address_len = sizeof(address);
     memset(address.sin_zero, '\0', sizeof address.sin_zero);
-    int new_connection;
+    // int new_connection;
     int nfds;
     int n = 0;
-    int index = 0;
+    // int index = 0;
     fds[0].fd = sockfd;
     fds[0].events = POLLIN;
     nfds = 1;
 
     while (1)
     {
-        int nfds = poll(&fds[0], nfds, -1);
+        nfds = poll(&fds[0], nfds, -1);
         if (nfds < 0)
         {
             throw "poll() failed";
         }
-        for (int i = 0; i < fds.size(); i++)
+        for (size_t i = 0; i < fds.size(); i++)
         {
             if (fds[i].revents & POLLIN)
             {
                 if (fds[i].fd == sockfd)
                 {
-                    connectfd = accept(sockfd, NULL, NULL);
+                    connectfd = accept(sockfd, (struct sockaddr *)&address, (socklen_t *)&address_len);
                     if (connectfd < 0)
                     {
                         throw "cannot accept\n";
@@ -42,7 +42,7 @@ void Socket::event_loop()
             else if (fds[i].fd == connectfd)
             {
                 char buf[4096];
-                int n = read(connectfd, buf, 1024);
+                n = read(connectfd, buf, 1024);
                 if (n < 0)
                 {
                     throw "cannot read\n";
@@ -56,8 +56,8 @@ void Socket::event_loop()
                     break;
                 }
                 std::cout << "received: " << buf << std::endl;
-                std::stringstream ss;
-                ss << buf;
+                // std::stringstream ss;
+                // ss << buf;
                 // Request req(ss);
                 // Response res;
                 // res.set_status_code(200);
@@ -69,7 +69,7 @@ void Socket::event_loop()
                 // std::string s = ss2.str();
                 // std::cout << s << std::endl;
                 // write(connectfd, s.c_str(), s.size());
-                fds.erase(fds.begin() + i);
+                // fds.erase(fds.begin() + i);
                 close(connectfd);
                 connectfd = -1;
                 break;

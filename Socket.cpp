@@ -1,15 +1,19 @@
 #include "Socket.hpp"
 
+
 Socket::Socket(int domain, int service, int protocol, int port, u_long interface)
 {
     addr.sin_family = domain;
     addr.sin_port = htons(port);
     addr.sin_addr.s_addr = htonl(interface);
     sockfd = socket(domain, service, protocol);
-    connectfd = bind(sockfd, (struct sockaddr *) &addr, sizeof(addr));
+    bindfd = bind(sockfd, (struct sockaddr *) &addr, sizeof(addr));
+    if (bindfd < 0)
+    {
+        throw "cannot bind\n";
+    }
     fcntl( sockfd, F_SETFL, O_NONBLOCK);
     listen(sockfd, 10);
-     
 }
 Socket::~Socket()
 {
@@ -31,3 +35,19 @@ struct sockaddr_in Socket::getAddr()
 {
     return addr;
 }
+
+void Socket::setConnectfd(int connectfd)
+{
+    this->connectfd = connectfd;
+}
+
+void Socket::removeFd(int index)
+{
+    fds.erase(fds.begin() + index);
+}
+
+void Socket::setFds(std::vector<struct pollfd> fds)
+{
+    this->fds = fds;
+}
+

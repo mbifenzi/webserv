@@ -23,8 +23,8 @@ public:
     int get_count();
     int get_connectfd();
     void set_connectfd(int connectfd);
-    void set_fds(std::vector<fd_t> fds);
-    std::vector<fd_t> get_fds();
+    // void set_fds(std::vector<fd_t> fds);
+    // std::vector<fd_t> get_fds();
     void event_loop();
     class Suck_it:public std::exception
     {
@@ -36,7 +36,4 @@ public:
 };
     // struct pollfd *fds;
     // int nfds;
-};
-
-
 #endif

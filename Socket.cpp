@@ -27,6 +27,16 @@ int    Socket::getSockfd()
     return sockfd;
 }
 
+void Socket::addFd()
+{
+    fds = std::vector<fd_t>(1);
+}
+
+void Socket::setPollFd(int sockfd)
+{
+    fds[0].fd
+}
+
 // int    Socket::getConnectfd()
 // {
 //     return connectfd;

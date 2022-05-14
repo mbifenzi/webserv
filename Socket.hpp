@@ -23,15 +23,15 @@ class Socket
 		int bindfd;
 		// int connectfd;
 		typedef struct pollfd fd_t;
-		 std::vector<fd_t> fds;
 		struct sockaddr_in addr;
 	public:
+		 std::vector<fd_t> fds;
 		Socket(int domain, int service, int protocol, int port, u_long interface);
 		~Socket();
 		int 	getSockfd();
 		int 	getConnectfd();
 		void	setConnectfd(int connectfd);
-		void	addFd(struct pollfd fd);
+		void	addFd();
 		void	removeFd(int index);
 		void	setFds(std::vector<struct pollfd> fds);
 		void	event_loop();

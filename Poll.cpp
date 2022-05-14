@@ -6,11 +6,10 @@ Poll::Poll(Socket *sock, int server_count)
     this->request = new Request();
     this->response = new Response();
     this->connectfd = -1;
-    this->fds.clear();
-    fds = std::vector<fd_t>(1);
+    // fds = std::vector<fd_t>(1);
     for (int i = 0; i < server_count; i++)
     {
-        fds.push_back(fd_t());
+        sock[i].addFd();
     }
     
     
@@ -24,7 +23,7 @@ void Poll::event_loop()
     // int new_connection;
     int nfds;
     // fds.push_back(fd_t());
-    fds[0].fd = 0;
+    // fds[0].fd = 0;
     int n = 0;
     // int index = 0;
     // std::cout << sockfd << std::endl;

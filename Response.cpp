@@ -1,8 +1,7 @@
 #include "Response.hpp"
 
-Response::Response(Socket socket)
+Response::Response()
 {
-    // *sock = &socket;
     status = 200;
     body = "";
     contentType = "text/html";

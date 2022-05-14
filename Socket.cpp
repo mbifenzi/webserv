@@ -3,6 +3,7 @@
 
 Socket::Socket(int domain, int service, int protocol, int port, u_long interface)
 {
+    fds = 		 std::vector<struct pollfd>(1);
     addr.sin_family = domain;
     addr.sin_port = htons(port);
     addr.sin_addr.s_addr = htonl(interface);
@@ -18,7 +19,7 @@ Socket::Socket(int domain, int service, int protocol, int port, u_long interface
 Socket::~Socket()
 {
     close(sockfd);
-    close(connectfd);
+    // close(connectfd);
 }
 
 int    Socket::getSockfd()
@@ -26,28 +27,28 @@ int    Socket::getSockfd()
     return sockfd;
 }
 
-int    Socket::getConnectfd()
-{
-    return connectfd;
-}
+// int    Socket::getConnectfd()
+// {
+//     return connectfd;
+// }
 
 struct sockaddr_in Socket::getAddr()
 {
     return addr;
 }
 
-void Socket::setConnectfd(int connectfd)
-{
-    this->connectfd = connectfd;
-}
+// void Socket::setConnectfd(int connectfd)
+// {
+//     this->connectfd = connectfd;
+// }
 
-void Socket::removeFd(int index)
-{
-    fds.erase(fds.begin() + index);
-}
+// void Socket::removeFd(int index)
+// {
+//     fds.erase(fds.begin() + index);
+// }
 
-void Socket::setFds(std::vector<struct pollfd> fds)
-{
-    this->fds = fds;
-}
+// void Socket::setFds(std::vector<struct pollfd> fds)
+// {
+//     this->fds = fds;
+// }
 

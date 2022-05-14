@@ -21,8 +21,9 @@ class Socket
 	private:
 		int sockfd;
 		int bindfd;
-		int connectfd;
-		std::vector<struct pollfd> fds;
+		// int connectfd;
+		typedef struct pollfd fd_t;
+		 std::vector<fd_t> fds;
 		struct sockaddr_in addr;
 	public:
 		Socket(int domain, int service, int protocol, int port, u_long interface);

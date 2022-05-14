@@ -5,7 +5,6 @@
 class Response
 {
     private:
-        // Socket *sock;
         int status;
         std::string body;
         std::string contentType;
@@ -32,7 +31,7 @@ class Response
         std::string varyAcceptEncodingBrotliGzipDeflateBrotli;
         std::string varyAcceptEncodingBrotliGzipDeflateBrotliDeflate;
     public:
-        Response(Socket socket);
+        Response();
         ~Response();
         void setStatus(int status);
         void setBody(std::string body);

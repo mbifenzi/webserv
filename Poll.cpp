@@ -1,30 +1,52 @@
-#include "Socket.hpp"
+#include "Poll.hpp"
 
-void Socket::event_loop()
+Poll::Poll(Socket *sock, int server_count)
+{
+    this->sock = sock;
+    this->request = new Request();
+    this->response = new Response();
+    this->connectfd = -1;
+    this->fds.clear();
+    fds = std::vector<fd_t>(1);
+    for (int i = 0; i < server_count; i++)
+    {
+        fds.push_back(fd_t());
+    }
+    
+    
+}
+
+void Poll::event_loop()
 {
     struct sockaddr_in address;
     int address_len = sizeof(address);
     memset(address.sin_zero, '\0', sizeof address.sin_zero);
     // int new_connection;
     int nfds;
+    // fds.push_back(fd_t());
+    fds[0].fd = 0;
     int n = 0;
     // int index = 0;
-    fds[0].fd = sockfd;
+    // std::cout << sockfd << std::endl;
+    std::cout << fds[0].fd << std::endl;
+    // fds[0].fd = sock->getSockfd();
     fds[0].events = POLLIN;
     nfds = 1;
 
+    std::cout << "debug" << std::endl;
     while (1)
     {
         nfds = poll(&fds[0], nfds, -1);
         if (nfds < 0)
         {
+            
             throw "poll() failed";
         }
         for (size_t i = 0; i < fds.size(); i++)
         {
             if (fds[i].revents & POLLIN)
             {
-                if (fds[i].fd == sockfd)
+                if (fds[i].fd == sock->getSockfd())
                 {
                     connectfd = accept(sockfd, (struct sockaddr *)&address, (socklen_t *)&address_len);
                     if (connectfd < 0)
@@ -32,7 +54,7 @@ void Socket::event_loop()
                         throw "cannot accept\n";
                     }
                     fcntl(connectfd, F_SETFL, O_NONBLOCK);
-                    fds[nfds].fd = connectfd;
+                    fds[nfds].fd =  connectfd;
                     fds[nfds].events = POLLIN;
                     nfds++;
                     std::cout << "accepted\n";

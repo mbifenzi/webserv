@@ -5,14 +5,14 @@ Poll::Poll(Socket *sock, int server_count)
     this->sock = sock;
     this->request = new Request();
     this->response = new Response();
-    this->connectfd = -1;
+    // this->connectfd = -1;
+    num_servers  = server_count;
     // fds = std::vector<fd_t>(1);
     for (int i = 0; i < server_count; i++)
     {
-        sock[i].addFd();
+        sock[i].initFd();
+        connectfd[i] = -1;
     }
-    
-    
 }
 
 void Poll::event_loop()
@@ -21,30 +21,55 @@ void Poll::event_loop()
     int address_len = sizeof(address);
     memset(address.sin_zero, '\0', sizeof address.sin_zero);
     // int new_connection;
-    int nfds;
+    std::vector<int> nfds;
     // fds.push_back(fd_t());
     // fds[0].fd = 0;
     int n = 0;
     // int index = 0;
     // std::cout << sockfd << std::endl;
-    std::cout << fds[0].fd << std::endl;
+    // std::cout << fds[0].fd << std::endl;
     // fds[0].fd = sock->getSockfd();
-    fds[0].events = POLLIN;
-    nfds = 1;
-
+    
+    // nfds[] = {1};
     std::cout << "debug" << std::endl;
     while (1)
     {
-        nfds = poll(&fds[0], nfds, -1);
-        if (nfds < 0)
+        for (int j = 0; j < num_servers; j++)
+        {
+            nfds[j] = poll(&sock[j].fds[0], nfds[j], -1);
+            if (nfds[j] < 0)
         {
             
             throw "poll() failed";
         }
-        for (size_t i = 0; i < fds.size(); i++)
+        }
+        
+        // nfds = poll(&fds[0], nfds, -1);
+        
+        for (size_t i = 0; i < sock[i].fds.size(); i++)
         {
-            if (fds[i].revents & POLLIN)
+            if (sock[i].fds[i].revents & POLLIN)
             {
+                for (int k = 0; k < num_servers; k++)
+                {
+                    if (sock[k].fds[i].fd == sock[k].getSockfd())
+                    {
+                        connectfd[k] = accept(sock[k].getSockfd(), (struct sockaddr *)&address, (socklen_t *)&address_len);
+                        if (connectfd[k] < 0)
+                        {
+                            throw "cannot accept\n";
+                        }
+                        fcntl(connectfd[k], F_SETFL, O_NONBLOCK);
+                        sock[k].fds[nfds[i]].fd = connectfd[i];
+                        sock[k].fds[nfds[i]].events = POLLIN;
+                        nfds++;
+                        std::cout << "accepted\n";
+                    }
+                }
+                {
+                    /* code */
+                }
+                
                 if (fds[i].fd == sock->getSockfd())
                 {
                     connectfd = accept(sockfd, (struct sockaddr *)&address, (socklen_t *)&address_len);

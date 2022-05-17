@@ -9,9 +9,10 @@ private:
     Socket *sock;
     Request *request;
     Response *response;
-    int connectfd;
+    std::vector<int> connectfd;
+    int num_servers;
 public:
-    Poll(Socket *sock);
+    Poll(Socket *sock, int server_count);
     ~Poll();
     void add(int fd, int events);
     void remove(int fd);

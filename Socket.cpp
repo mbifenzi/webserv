@@ -27,15 +27,22 @@ int    Socket::getSockfd()
     return sockfd;
 }
 
-void Socket::addFd()
+void Socket::initFd()
 {
     fds = std::vector<fd_t>(1);
+    fds[0].fd = sockfd;
+    fds[0].events = POLLIN;
+
 }
 
-void Socket::setPollFd(int sockfd)
+void Socket::addFd()
 {
-    fds[0].fd
+    fds.push_back(fd_t());
+    fds[fds.size() - 1].fd = sockfd;
+    fds[fds.size() - 1].events = POLLIN;
 }
+
+
 
 // int    Socket::getConnectfd()
 // {

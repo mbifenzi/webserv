@@ -31,7 +31,8 @@ class Socket
 		int 	getSockfd();
 		int 	getConnectfd();
 		void	setConnectfd(int connectfd);
-		void	addFd();
+		void 	addFd();
+		void	initFd();
 		void	removeFd(int index);
 		void	setFds(std::vector<struct pollfd> fds);
 		void	event_loop();

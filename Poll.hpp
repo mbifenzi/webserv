@@ -1,6 +1,6 @@
 #ifndef POLL_HPP
 #define POLL_HPP
-#include "socket.hpp"
+#include "Socket.hpp"
 #include "Request.hpp"
 #include "Response.hpp"
 
@@ -12,7 +12,7 @@ private:
     std::vector<int> connectfd;
     int num_servers;
 public:
-    Poll(Socket *sock, int server_count);
+    Poll(Socket *sock[100], int servers);
     ~Poll();
     void add(int fd, int events);
     void remove(int fd);

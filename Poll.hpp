@@ -6,13 +6,13 @@
 
 class Poll {
 private:
-    Socket *sock;
+    std::vector<Socket> sock;
     Request *request;
     Response *response;
-    std::vector<int> connectfd;
+    // std::vector<int> connectfd;
     int num_servers;
 public:
-    Poll(Socket *sock[100], int servers);
+    Poll(std::vector<Socket> socket, int servers);
     ~Poll();
     void add(int fd, int events);
     void remove(int fd);
@@ -24,8 +24,6 @@ public:
     int get_count();
     int get_connectfd();
     void set_connectfd(int connectfd);
-    // void set_fds(std::vector<fd_t> fds);
-    // std::vector<fd_t> get_fds();
     void event_loop();
     class Suck_it:public std::exception
     {
@@ -35,6 +33,5 @@ public:
         }
     };
 };
-    // struct pollfd *fds;
-    // int nfds;
+
 #endif

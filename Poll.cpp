@@ -1,18 +1,20 @@
 #include "Poll.hpp"
 
-Poll::Poll(Socket *socket, int servers)
+Poll::Poll(std::vector<Socket> socket, int servers)
 {
     this->sock = socket;
-    this->request = new Request();
-    this->response = new Response();
-    // this->connectfd = -1;
+    // this->request = new Request();
+    // this->response = new Response();
     num_servers  = servers;
-    // fds = std::vector<fd_t>(1);
     for (int i = 0; i < servers; i++)
     {
         sock[i].initFd();
-        connectfd[i] = -1;
     }
+}
+Poll::~Poll()
+{
+    // delete request;
+    // delete response;
 }
 
 void Poll::event_loop()

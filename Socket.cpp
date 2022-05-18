@@ -21,6 +21,14 @@ Socket::~Socket()
     close(sockfd);
     // close(connectfd);
 }
+Socket &Socket::operator=(const Socket &sock)
+{
+    this->sockfd = sock.sockfd;
+    this->bindfd = sock.bindfd;
+    this->addr = sock.addr;
+    this->fds = sock.fds;
+    return *this;
+}
 
 int    Socket::getSockfd()
 {

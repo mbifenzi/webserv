@@ -7,10 +7,10 @@
 class Poll {
 private:
     std::vector<Socket> sock;
-    Request *request;
-    Response *response;
+    // Request *request;
+    // Response *response;
     // std::vector<int> nfds;
-    // std::vector<int> connectfd;
+
     int num_servers;
 public:
     Poll(std::vector<Socket> socket, int servers);

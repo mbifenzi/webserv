@@ -30,23 +30,18 @@ void Poll::event_loop()
     memset(address.sin_zero, '\0', sizeof address.sin_zero);
     std::vector<int> nfds;
     nfds =  std::vector<int>(num_servers);
+    nfds[0] = 1;
+    nfds[1] = 1;
     int n = 0;
     int connectFd = -1;
     std::cout << "debug" << std::endl;
-    std::vector<int> vec;
-    // for (int i = 0; i < sock.size();i++)
-    //     vec.push_back(sock)
-    struct pollfd *fd = sock[0].fds.data();
-    std::cout << "NIl=>" << fd[0].fd << std::endl;
-   int  dd = socket(AF_INET, SOCK_STREAM, 0);
-    std::cout << dd << "ddddd" <<std::endl;
     while (1)
     {
             // printf("jldjhfl %d %d\n", sock[0].fds[0].fd, );÷
         for (int j = 0; j < num_servers; j++)
         {
             std::cout << sock[j].fds[0].fd << std::endl;
-            nfds[j] = poll(sock[j].fds.data(), 1, -1);
+            nfds[j] = poll(sock[j].fds.data(), nfds[j], -1);
             if (sock[j].fds[0].revents == 32)
             {
                 std::cout << "error" << std::endl;
@@ -65,6 +60,7 @@ void Poll::event_loop()
                     if (connectFd < 0)
                         throw "cannot accept\n";
                     fcntl(connectFd, F_SETFL, O_NONBLOCK);
+                    std::cout << "WAAAA "<< j << std::endl;
                     sock[j].fds[nfds[j]].fd = connectFd;
                     sock[j].fds[nfds[j]].events = POLLIN;
                     nfds[j] = nfds[j] + 1;
@@ -81,13 +77,14 @@ void Poll::event_loop()
                     if (n == 0)
                     {
                         std::cout << "client disconnected\n";
-                        // sock[j].fds.erase(sock[j].fds.begin() + i);
-                        // close(connectFd);
+                        sock[j].fds.erase(sock[j].fds.begin() + i);
+                        close(connectFd);
                         connectFd = -1; 
                         break;
                     }
                 }
             }
+            // nfds.push_back(int());
         }
     }
 }

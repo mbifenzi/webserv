@@ -50,6 +50,12 @@ void Socket::addFd()
     fds[fds.size() - 1].events = POLLIN;
 }
 
+struct sockaddr_in& Socket::getAddr()
+{
+    return(this->addr);
+}
+
+
 
 
 // int    Socket::getConnectfd()
@@ -57,10 +63,10 @@ void Socket::addFd()
 //     return connectfd;
 // }
 
-struct sockaddr_in Socket::getAddr()
-{
-    return addr;
-}
+// struct sockaddr_in Socket::getAddr()
+// {
+//     return addr;
+// }
 
 // void Socket::setConnectfd(int connectfd)
 // {

@@ -31,6 +31,7 @@ class Socket
 		int 	getSockfd();
 		int 	getConnectfd();
 		void	setConnectfd(int connectfd);
+		struct sockaddr_in 	getSockaddr();
 		void 	addFd();
 		void	initFd();
 		void	removeFd(int index);
@@ -38,7 +39,7 @@ class Socket
 		void	event_loop();
 		Socket &operator=(const Socket &sock);
 		std::vector<struct pollfd> getFds();
-		struct sockaddr_in getAddr();
+		struct sockaddr_in& getAddr();
 		class Suck_it:public std::exception
     	{
 			const char* what() const throw()

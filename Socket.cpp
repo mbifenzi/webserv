@@ -3,22 +3,29 @@
 
 Socket::Socket(int domain, int service, int protocol, int port, u_long interface)
 {
+        struct sockaddr_in address;
     fds = 		 std::vector<struct pollfd>(1);
-    addr.sin_family = domain;
-    addr.sin_port = htons(port);
-    addr.sin_addr.s_addr = htonl(interface);
-    sockfd = socket(domain, service, protocol);
-    bindfd = bind(sockfd, (struct sockaddr *) &addr, sizeof(addr));
+    address.sin_family = AF_INET;
+    address.sin_port = htons(port);
+    address.sin_addr.s_addr = INADDR_ANY;
+
+    sockfd = socket(AF_INET, SOCK_STREAM, 0);
+    if (sockfd < 0)
+        perror("SOkcet ");
+
+    fcntl( sockfd, F_SETFL, O_NONBLOCK);
+    bindfd = bind(sockfd, (struct sockaddr *) &address, sizeof(address));
     if (bindfd < 0)
     {
         throw "cannot bind\n";
     }
-    fcntl( sockfd, F_SETFL, O_NONBLOCK);
-    listen(sockfd, 10);
+    int l = listen(sockfd, 1000);
+    if (l < 0)
+        perror("Ta9 ta9");
 }
 Socket::~Socket()
 {
-    close(sockfd);
+    // close(sockfd);
     // close(connectfd);
 }
 Socket &Socket::operator=(const Socket &sock)
@@ -40,6 +47,7 @@ void Socket::initFd()
     fds = std::vector<fd_t>(1);
     fds[0].fd = sockfd;
     fds[0].events = POLLIN;
+
 
 }
 
@@ -82,4 +90,3 @@ struct sockaddr_in& Socket::getAddr()
 // {
 //     this->fds = fds;
 // }
-

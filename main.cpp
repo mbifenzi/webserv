@@ -12,11 +12,11 @@ int main(int argc, char **argv)
     (void)argv;
     std::string header;
     std::vector<Socket> socketa;
-    int servers = 2;
-    socketa.push_back(Socket(AF_INET, SOCK_STREAM, 0, 1415, INADDR_ANY));
-    socketa.push_back(Socket(AF_INET, SOCK_STREAM, 0, 1416, INADDR_ANY));
+    int servers = 1;
+    socketa.push_back(Socket(AF_INET, SOCK_STREAM, 0, 1419, INADDR_ANY));
+    // socketa.push_back(Socket(AF_INET, SOCK_STREAM, 0, 1416, INADDR_ANY));
     Poll Poll(socketa, servers);
-    std::cout <<  "Socketa  = "<<socketa[0].getSockfd() << std::endl;
+    std::cout <<  "Socketa  = "<< socketa[0].getSockfd() << std::endl;
     Poll.event_loop();
     return 0;
 }

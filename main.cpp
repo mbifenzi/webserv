@@ -14,9 +14,9 @@ int main(int argc, char **argv)
     std::vector<Socket> socketa;
     int servers = 2;
     socketa.push_back(Socket(AF_INET, SOCK_STREAM, 0, 1419, INADDR_ANY));
-    socketa.push_back(Socket(AF_INET, SOCK_STREAM, 0, 1416, INADDR_ANY));
+    //socketa.push_back(Socket(AF_INET, SOCK_STREAM, 0, 1416, INADDR_ANY));
+    // std::cout << "socketaaaa" << socketa[1].fds[0].fd << std::endl;
     Poll Poll(socketa, servers);
-    std::cout <<  "Socketa  = "<< socketa[0].getSockfd() << std::endl;
     Poll.event_loop();
     return 0;
 }

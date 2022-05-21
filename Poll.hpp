@@ -7,6 +7,7 @@
 class Poll {
 private:
     std::vector<Socket> sock;
+    struct pollfd pfds[100];
     // Request *request;
     // Response *response;
     // std::vector<int> nfds;

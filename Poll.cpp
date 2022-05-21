@@ -1,26 +1,24 @@
 #include "Poll.hpp"
-
+#include <fcntl.h>
+#include <string.h>
 Poll::Poll(std::vector<Socket> socket, int servers)
 {
     this->sock = socket;
     // int bindfd;
     num_servers  = servers;
-    for (int i = 0; i < servers; i++)
-    {
-        sock[i].initFd();
-        // bindfd = bind(sock[i].getSockfd(), (struct sockaddr *) &sock[i].getAddr(), sizeof(sock[i].getAddr()));
-        // if (bindfd < 0)
-        // {
-        //     std::cout << "bind error" << std::endl;
-        // }
-        // fcntl(sock[i].getSockfd(), F_SETFL, O_NONBLOCK);
-        // listen(sock[i].getSockfd(), 10);
-    }
+    // for (int i = 0; i < servers; i++)
+    // {
+    //     sock[i].initFd();
+    // }
+    pfds[0].fd = socket[0].getSockfd();
+    pfds[0].events = POLLIN;
+    // pfds[1].fd = socket[1].getSockfd();
+    // pfds[1].events = POLLIN;
+
 }
 Poll::~Poll()
 {
-    // delete request;
-    // delete response;
+
 }
 
 void Poll::event_loop()
@@ -28,63 +26,77 @@ void Poll::event_loop()
     struct sockaddr_in address;
     int address_len = sizeof(address);
     memset(address.sin_zero, '\0', sizeof address.sin_zero);
-    std::vector<int> nfds;
-    nfds =  std::vector<int>(num_servers);
-    nfds[0] = 1;
-    nfds[1] = 1;
-    int n = 0;
-    int connectFd = -1;
+    //struct pollfd pfds[100];
+    int nfds = 1;
+
+    //std::vector<int> nfds;
+   //nfds =  std::vector<int>(num_servers);
+     char buf[4096];
+     int valread;
+   // nfds[0] = 1;
+   // nfds[1] = 1;
+    // int n = 0;
+     int connectFd = -1;
+
+    // get all servers fds
+    // and gather them in one array 
+    // and pass it poll()
+    // when an event occurs to an FD, get the owner (server) of the fd
+    // then...
+    int ret;
     std::cout << "debug" << std::endl;
     while (1)
     {
-            // printf("jldjhfl %d %d\n", sock[0].fds[0].fd, );÷
-        for (int j = 0; j < num_servers; j++)
+        ret  = poll(pfds, nfds, -1);
+        fcntl(pfds[0].fd, F_SETFL, O_NONBLOCK);
+        std::cout << "nfds: " << nfds << std::endl;
+
+        for (int j = 0; j <= nfds; j++)
         {
-            std::cout << sock[j].fds[0].fd << std::endl;
-            nfds[j] = poll(sock[j].fds.data(), nfds[j], -1);
-            if (sock[j].fds[0].revents == 32)
+            if (pfds[j].revents & POLLIN)
             {
-                std::cout << "error" << std::endl;
-                exit(0);
-            }
-            std::cout << "-------" <<sock[j].fds[0].revents << std::endl; 
-            if (nfds[j] < 0)
-            {
-                throw "poll() failed";
-            }
-            for (int i = 0; i < nfds[j]; i++)
-            {
-                if (sock[j].fds[i].fd == sock[j].getSockfd())
+                if (pfds[j].fd == sock[0].getSockfd())
                 {
-                    connectFd = accept(sock[j].getSockfd(), (struct sockaddr *)&address, (socklen_t *)&address_len);
+                    connectFd = accept(sock[0].getSockfd(), (struct sockaddr *) &address, (socklen_t *) &address_len);
                     if (connectFd < 0)
-                        throw "cannot accept\n";
+                    {
+                        perror("accept");
+                        exit(1);
+                    }
                     fcntl(connectFd, F_SETFL, O_NONBLOCK);
-                    std::cout << "WAAAA "<< j << std::endl;
-                    sock[j].fds[nfds[j]].fd = connectFd;
-                    sock[j].fds[nfds[j]].events = POLLIN;
-                    nfds[j] = nfds[j] + 1;
-                    std::cout << "accepted\n";
+                    pfds[nfds].fd = connectFd;
+                    pfds[nfds].events = POLLIN;
+                    nfds++;
+                     continue;
                 }
-                else if (sock[j].fds[i].fd == connectFd)
+                else
                 {
-                    char buf[4096];
-                    n = read(connectFd, buf, 1024);
-                    if (n < 0)
+                    valread = read(pfds[j].fd, buf, 3000);
+                    if (valread < 0)
                     {
-                        throw "cannot read\n";
+                        perror("read");
+                        exit(1);
                     }
-                    if (n == 0)
-                    {
-                        std::cout << "client disconnected\n";
-                        sock[j].fds.erase(sock[j].fds.begin() + i);
-                        close(connectFd);
-                        connectFd = -1; 
-                        break;
-                    }
+                    std::cout << "valread: " << valread << std::endl;
+                    std::cout << "buf: " << buf << std::endl;
+                    pfds[j].events = POLLOUT;
+                    continue;
                 }
+
             }
-            // nfds.push_back(int());
+            else if (pfds[j].revents & POLLOUT)
+            {
+                std::cout << "writing j:" << j << std::endl;
+                char *header = strdup("HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n");
+                char *msg = strdup("<html><body><h1>Hello World</h1></body></html>");
+                write(pfds[j].fd, header, strlen(header));
+                write(pfds[j].fd, msg, strlen(msg));
+                close(pfds[j].fd);
+                pfds[j].fd = -1;
+                nfds--;
+
+            }
         }
+            
     }
 }

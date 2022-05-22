@@ -4,16 +4,15 @@
 Poll::Poll(std::vector<Socket> socket, int servers)
 {
     this->sock = socket;
-    // int bindfd;
     num_servers  = servers;
-    // for (int i = 0; i < servers; i++)
-    // {
-    //     sock[i].initFd();
-    // }
-    pfds[0].fd = socket[0].getSockfd();
-    pfds[0].events = POLLIN;
-    // pfds[1].fd = socket[1].getSockfd();
-    // pfds[1].events = POLLIN;
+    pfds = std::vector<pfd_t>(servers);
+    for (int i = 0; i < servers; i++)
+    {
+        pfds[i].fd = socket[i].getSockfd();
+        pfds[i].events = POLLIN;
+        pfds[i].revents = 0;
+    }
+
 
 }
 Poll::~Poll()
@@ -26,17 +25,12 @@ void Poll::event_loop()
     struct sockaddr_in address;
     int address_len = sizeof(address);
     memset(address.sin_zero, '\0', sizeof address.sin_zero);
-    //struct pollfd pfds[100];
     int nfds = 1;
-
-    //std::vector<int> nfds;
-   //nfds =  std::vector<int>(num_servers);
      char buf[4096];
      int valread;
-   // nfds[0] = 1;
-   // nfds[1] = 1;
-    // int n = 0;
+
      int connectFd = -1;
+
 
     // get all servers fds
     // and gather them in one array 
@@ -47,54 +41,62 @@ void Poll::event_loop()
     std::cout << "debug" << std::endl;
     while (1)
     {
-        ret  = poll(pfds, nfds, -1);
+        std::cout << "polling..." << std::endl;
+        ret  = poll(pfds.data(), nfds, -1);
         fcntl(pfds[0].fd, F_SETFL, O_NONBLOCK);
-        std::cout << "nfds: " << nfds << std::endl;
-
-        for (int j = 0; j <= nfds; j++)
+        for (int j = 0; j < nfds; j++)
         {
             if (pfds[j].revents & POLLIN)
             {
-                if (pfds[j].fd == sock[0].getSockfd())
+                for (int i = 0; i < num_servers)
                 {
-                    connectFd = accept(sock[0].getSockfd(), (struct sockaddr *) &address, (socklen_t *) &address_len);
+                    if (pfds[j].fd == sock[i].getSockfd())
+                {
+                    connectFd = accept(sock[i].getSockfd(), (struct sockaddr *) &address, (socklen_t *) &address_len); // connection
                     if (connectFd < 0)
                     {
                         perror("accept");
                         exit(1);
                     }
-                    fcntl(connectFd, F_SETFL, O_NONBLOCK);
+                    // fcntl(connectFd, F_SETFL, O_NONBLOCK);
                     pfds[nfds].fd = connectFd;
                     pfds[nfds].events = POLLIN;
-                    nfds++;
-                     continue;
-                }
-                else
-                {
-                    valread = read(pfds[j].fd, buf, 3000);
-                    if (valread < 0)
-                    {
-                        perror("read");
-                        exit(1);
-                    }
-                    std::cout << "valread: " << valread << std::endl;
-                    std::cout << "buf: " << buf << std::endl;
-                    pfds[j].events = POLLOUT;
+                    nfds++; // 2
                     continue;
                 }
+                    else
+                    {
+                        valread = read(pfds[j].fd, buf, 3000);
+                            perror("read ");
 
+                        if (valread < 0)
+                        {
+                            perror("read");
+                            exit(1);
+                        }
+                        pfds[j].events = POLLOUT;
+                        continue;
+                    }
+                }
             }
-            else if (pfds[j].revents & POLLOUT)
+            else if (pfds[j].revents & POLLOUT) // there is some kinda request
             {
                 std::cout << "writing j:" << j << std::endl;
-                char *header = strdup("HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n");
+                
+                char *header = strdup("HTTP/1.1 200 OK\r\nContent-Type: text/html\nConnection: close\r\n\r\n");
                 char *msg = strdup("<html><body><h1>Hello World</h1></body></html>");
                 write(pfds[j].fd, header, strlen(header));
                 write(pfds[j].fd, msg, strlen(msg));
-                close(pfds[j].fd);
-                pfds[j].fd = -1;
-                nfds--;
+                                                        perror("write ");
 
+                // pfds[j].events = POLLIN;
+                std::cout << "====>" << pfds[j].fd << std::endl;
+                close(pfds[j].fd);
+                perror("CLose ");
+                pfds[j].fd = -1;
+                pfds[j].events = 0;
+                pfds[j].revents = 0;
+                nfds--;
             }
         }
             

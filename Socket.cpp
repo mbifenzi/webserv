@@ -7,19 +7,19 @@ Socket::Socket(int domain, int service, int protocol, int port, u_long interface
     //fds = std::vector<struct pollfd>(1);
     address.sin_family = domain;
     address.sin_port = htons(port);
-    address.sin_addr.s_addr = interface;
+    address.sin_addr.s_addr =htonl(interface);
 
     sockfd = socket(domain, service, protocol);
     if (sockfd < 0)
         perror("socket error ");
 
-    fcntl( sockfd, F_SETFL, O_NONBLOCK);
+    // fcntl( sockfd, F_SETFL, O_NONBLOCK);
     bindfd = bind(sockfd, (struct sockaddr *) &address, sizeof(address));
     if (bindfd < 0)
     {
         throw "cannot bind\n";
     }
-    int l = listen(sockfd, 1000);
+    int l = listen(sockfd, 128);
     if (l < 0)
         perror("listen error");
 }
